@@ -117,10 +117,10 @@ def _get_cuda_path():
     #if frozen, use that cuda
     
     if is_frozen():
-        cuda_path = os.path.join(os.getcwd(), "_internal", "nvidia", "cuda_runtime")
+        cuda_path = os.path.join(os.getcwd(), "_internal", "nvidia", "cuda_nvrtc")
     else:
         site_packages = site.getsitepackages()[0]
-        cuda_path = os.path.join(site_packages, "nvidia", "cuda_runtime")
+        cuda_path = os.path.join(site_packages, "nvidia", "cuda_nvrtc")
     return cuda_path
     # Use environment variable
     cuda_path = os.environ.get('CUDA_PATH', '')  # Nvidia default on Windows
