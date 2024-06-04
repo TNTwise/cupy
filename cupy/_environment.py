@@ -12,7 +12,7 @@ import shutil
 import sys
 from typing import Any, Dict, List, Optional, Tuple
 import warnings
-
+import site 
 
 # '' for uninitialized, None for non-existing
 _cuda_path = ''
@@ -101,7 +101,9 @@ def get_hipcc_path():
     if _hipcc_path == '':
         _hipcc_path = _get_hipcc_path()
     return _hipcc_path
-
+    
+def is_frozen():
+    return getattr(sys, 'frozen', False) 
 
 def get_cub_path():
     # Returns the CUB header path or None if not found.
@@ -112,6 +114,14 @@ def get_cub_path():
 
 
 def _get_cuda_path():
+    #if frozen, use that cuda
+    
+    if is_frozen():
+        cuda_path = os.path.join(os.getcwd(), "_internal", "nvidia", "cuda_runtime")
+    else:
+        site_packages = site.getsitepackages()[0]
+        cuda_path = os.path.join(site_packages, "nvidia", "cuda_runtime")
+    return cuda_path
     # Use environment variable
     cuda_path = os.environ.get('CUDA_PATH', '')  # Nvidia default on Windows
     if os.path.exists(cuda_path):
@@ -204,7 +214,7 @@ def _setup_win32_dll_directory():
         is_conda = (config is not None and (config['packaging'] == 'conda'))
 
         # Path to the CUDA Toolkit binaries
-        cuda_path = get_cuda_path()
+        cuda_path = ()
         if cuda_path is not None:
             if is_conda:
                 cuda_bin_path = cuda_path
